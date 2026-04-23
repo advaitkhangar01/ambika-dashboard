@@ -1,0 +1,1400 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F6F2;
+  --surface:#FFFFFF;
+  --surface2:#F1EFE8;
+  --border:#E0DDD5;
+  --border2:#C8C5BC;
+  --text:#1C1B18;
+  --text2:#6B6860;
+  --text3:#9A9890;
+  --accent:#1D9E75;
+  --accent-light:#E1F5EE;
+  --accent-dark:#085041;
+  --warn:#BA7517;
+  --warn-light:#FAEEDA;
+  --danger:#A32D2D;
+  --danger-light:#FCEBEB;
+  --info:#185FA5;
+  --info-light:#E6F1FB;
+  --purple:#534AB7;
+  --purple-light:#EEEDFE;
+  --radius:10px;
+  --radius-sm:6px;
+  --shadow:0 1px 3px rgba(0,0,0,0.07);
+}
+body{font-family:'Georgia',serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;display:flex}
+
+/* SIDEBAR */
+.sidebar{width:220px;min-height:100vh;background:var(--text);color:#fff;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-logo{padding:20px 18px 14px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sidebar-logo .brand{font-size:16px;font-weight:700;letter-spacing:-0.3px;color:#fff}
+.sidebar-logo .sub{font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px;font-family:sans-serif}
+.nav-section{padding:14px 12px 6px;font-size:10px;font-family:sans-serif;letter-spacing:0.8px;text-transform:uppercase;color:rgba(255,255,255,0.35)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;margin:1px 8px;border-radius:var(--radius-sm);cursor:pointer;font-family:sans-serif;font-size:13px;color:rgba(255,255,255,0.7);transition:all 0.15s;border:none;background:none;width:calc(100% - 16px);text-align:left}
+.nav-item:hover{background:rgba(255,255,255,0.08);color:#fff}
+.nav-item.active{background:var(--accent);color:#fff}
+.nav-item .icon{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.nav-item .badge{margin-left:auto;background:var(--danger);color:#fff;font-size:10px;padding:1px 6px;border-radius:20px}
+.sidebar-bottom{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,0.1)}
+.admin-chip{display:flex;align-items:center;gap:9px}
+.admin-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:sans-serif;color:#fff;flex-shrink:0}
+.admin-name{font-size:12px;font-family:sans-serif;color:rgba(255,255,255,0.8);font-weight:500}
+.admin-role{font-size:10px;color:rgba(255,255,255,0.4);font-family:sans-serif}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:10}
+.topbar-title{font-size:16px;font-weight:600;flex:1}
+.topbar-search{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0 12px;height:34px;font-size:13px;font-family:sans-serif;color:var(--text2);cursor:text;min-width:220px}
+.topbar-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:0 14px;height:34px;font-size:12px;font-family:sans-serif;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.topbar-btn.sec{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.content{padding:22px 24px;flex:1;overflow-y:auto}
+
+/* CARDS / STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px}
+.stat-card.green::before{background:var(--accent)}
+.stat-card.warn::before{background:var(--warn)}
+.stat-card.danger::before{background:var(--danger)}
+.stat-card.info::before{background:var(--info)}
+.stat-card.purple::before{background:var(--purple)}
+.stat-label{font-size:11px;font-family:sans-serif;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.stat-val{font-size:26px;font-weight:700;font-family:sans-serif;color:var(--text);line-height:1}
+.stat-sub{font-size:11px;font-family:sans-serif;color:var(--text3);margin-top:5px}
+.stat-sub .up{color:var(--accent)}
+.stat-sub .dn{color:var(--danger)}
+
+/* TABLE */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.table-header{padding:14px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.table-title{font-size:14px;font-weight:600;flex:1}
+.filter-tabs{display:flex;gap:4px}
+.ftab{padding:5px 12px;border-radius:var(--radius-sm);font-size:12px;font-family:sans-serif;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2)}
+.ftab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-family:sans-serif;font-size:13px}
+thead th{background:var(--bg);padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text2);font-weight:600;border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s}
+tbody tr:hover{background:#FAFAF7}
+tbody tr:last-child{border-bottom:none}
+td{padding:11px 14px;vertical-align:middle}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;font-family:sans-serif}
+.badge.new{background:var(--info-light);color:var(--info)}
+.badge.pending{background:var(--warn-light);color:var(--warn)}
+.badge.confirmed{background:var(--accent-light);color:var(--accent-dark)}
+.badge.cancelled{background:var(--danger-light);color:var(--danger)}
+.badge.inprogress{background:var(--purple-light);color:var(--purple)}
+.badge.completed{background:#EAF3DE;color:#3B6D11}
+.priority-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+.p-high{background:var(--danger)}
+.p-med{background:var(--warn)}
+.p-low{background:var(--accent)}
+
+/* GRID LAYOUTS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.card-title{font-size:13px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+/* BOOKING DETAIL */
+.detail-section{margin-bottom:20px}
+.detail-section h3{font-size:12px;font-family:sans-serif;text-transform:uppercase;letter-spacing:0.6px;color:var(--text2);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.detail-row{display:flex;justify-content:space-between;padding:6px 0;font-family:sans-serif;font-size:13px;border-bottom:1px solid var(--border)}
+.detail-row:last-child{border-bottom:none}
+.detail-row .key{color:var(--text2)}
+.detail-row .val{font-weight:500;text-align:right}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:20px}
+.timeline::before{content:'';position:absolute;left:6px;top:6px;bottom:6px;width:1px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:14px;padding-left:16px}
+.tl-item::before{content:'';position:absolute;left:-14px;top:5px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--surface)}
+.tl-item.grey::before{background:var(--border2)}
+.tl-time{font-size:10px;font-family:sans-serif;color:var(--text3);margin-bottom:2px}
+.tl-text{font-size:12px;font-family:sans-serif;color:var(--text);line-height:1.4}
+
+/* FORMS */
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;font-family:sans-serif;text-transform:uppercase;letter-spacing:0.5px;color:var(--text2);margin-bottom:5px;display:block}
+.form-input{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:sans-serif;font-size:13px;background:var(--surface);color:var(--text);outline:none}
+.form-input:focus{border-color:var(--accent)}
+.form-select{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:sans-serif;font-size:13px;background:var(--surface);color:var(--text);outline:none;cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* PROPERTY CARD */
+.prop-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.prop-img{height:120px;background:linear-gradient(135deg,#9FE1CB 0%,#1D9E75 100%);display:flex;align-items:center;justify-content:center;font-size:32px;position:relative}
+.prop-tag{position:absolute;top:8px;right:8px;background:#fff;border-radius:20px;padding:3px 9px;font-size:10px;font-family:sans-serif;font-weight:700;color:var(--text)}
+.prop-body{padding:12px}
+.prop-name{font-size:13px;font-weight:600;margin-bottom:3px}
+.prop-loc{font-size:11px;font-family:sans-serif;color:var(--text2);margin-bottom:8px}
+.prop-stats{display:flex;gap:10px;font-size:11px;font-family:sans-serif;color:var(--text2)}
+.prop-price{font-size:14px;font-weight:700;font-family:sans-serif;color:var(--accent);margin-top:8px}
+
+/* ADMIN CARDS */
+.admin-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:14px}
+.admin-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;font-family:sans-serif;color:#fff;flex-shrink:0}
+.admin-info{flex:1}
+.admin-n{font-size:14px;font-weight:600;font-family:sans-serif}
+.admin-r{font-size:11px;font-family:sans-serif;color:var(--text2);margin-top:1px}
+.admin-stats{display:flex;gap:12px;margin-top:6px}
+.admin-stat{font-size:11px;font-family:sans-serif;color:var(--text2)}
+.admin-stat span{font-weight:600;color:var(--text)}
+.btn{padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-family:sans-serif;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);display:inline-flex;align-items:center;gap:5px;transition:all 0.1s}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{background:var(--accent-dark)}
+.btn.danger{background:var(--danger-light);color:var(--danger);border-color:var(--danger)}
+.btn.warn{background:var(--warn-light);color:var(--warn);border-color:var(--warn)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+
+/* MINI BARS */
+.mini-bar-wrap{margin-bottom:10px}
+.mini-bar-label{display:flex;justify-content:space-between;font-size:12px;font-family:sans-serif;color:var(--text2);margin-bottom:4px}
+.mini-bar-track{background:var(--surface2);border-radius:20px;height:6px;overflow:hidden}
+.mini-bar-fill{height:6px;border-radius:20px;background:var(--accent)}
+
+/* NOTIF */
+.notif{display:flex;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;font-family:sans-serif}
+.notif:hover{background:var(--bg)}
+.notif-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.notif-body{flex:1}
+.notif-title{font-size:13px;font-weight:500;color:var(--text)}
+.notif-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.notif-time{font-size:10px;color:var(--text3);margin-top:3px}
+.unread{background:#F7FCFA}
+
+/* PAGE HIDE/SHOW */
+.page{display:none}
+.page.active{display:block}
+
+/* REVENUE BARS */
+.rev-bar-wrap{display:flex;align-items:flex-end;gap:6px;height:80px;margin-top:10px}
+.rev-bar{flex:1;background:var(--accent-light);border-radius:3px 3px 0 0;position:relative;display:flex;align-items:flex-end;justify-content:center;cursor:default;transition:background 0.15s}
+.rev-bar:hover{background:var(--accent)}
+.rev-bar-label{font-size:9px;font-family:sans-serif;color:var(--text3);position:absolute;bottom:-16px;white-space:nowrap}
+
+/* QUICK ACTIONS */
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.qa-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;font-family:sans-serif;text-align:left;transition:all 0.15s}
+.qa-btn:hover{border-color:var(--accent);background:var(--accent-light)}
+.qa-icon{font-size:20px;margin-bottom:6px}
+.qa-label{font-size:12px;font-weight:600;color:var(--text)}
+.qa-sub{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* Enquiry tag */
+.enq-source{font-size:10px;font-family:sans-serif;padding:2px 7px;border-radius:20px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);margin-left:6px}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">🏡 VillaStay</div>
+    <div class="sub">Admin Portal</div>
+  </div>
+
+  <div class="nav-section">Main</div>
+  <button class="nav-item active" onclick="nav('dashboard')"><span class="icon">◼</span> Dashboard</button>
+  <button class="nav-item" onclick="nav('enquiries')"><span class="icon">📥</span> New Enquiries <span class="badge">7</span></button>
+  <button class="nav-item" onclick="nav('bookings')"><span class="icon">📋</span> All Bookings</button>
+  <button class="nav-item" onclick="nav('mybookings')"><span class="icon">👤</span> My Bookings</button>
+  <button class="nav-item" onclick="nav('calendar')"><span class="icon">📅</span> Calendar</button>
+
+  <div class="nav-section">Properties</div>
+  <button class="nav-item" onclick="nav('properties')"><span class="icon">🏠</span> Properties</button>
+  <button class="nav-item" onclick="nav('availability')"><span class="icon">✅</span> Availability</button>
+  <button class="nav-item" onclick="nav('pricing')"><span class="icon">💰</span> Pricing Rules</button>
+
+  <div class="nav-section">People</div>
+  <button class="nav-item" onclick="nav('customers')"><span class="icon">🧑</span> Customers</button>
+  <button class="nav-item" onclick="nav('team')"><span class="icon">👥</span> Team & Admins</button>
+
+  <div class="nav-section">Reports</div>
+  <button class="nav-item" onclick="nav('reports')"><span class="icon">📊</span> Reports</button>
+  <button class="nav-item" onclick="nav('notifications')"><span class="icon">🔔</span> Notifications <span class="badge">3</span></button>
+  <button class="nav-item" onclick="nav('settings')"><span class="icon">⚙️</span> Settings</button>
+
+  <div class="sidebar-bottom">
+    <div class="admin-chip">
+      <div class="admin-avatar">RP</div>
+      <div>
+        <div class="admin-name">Rajesh Pawar</div>
+        <div class="admin-role">Senior Admin</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard</div>
+    <div class="topbar-search">🔍 Search bookings, customers, properties…</div>
+    <button class="topbar-btn sec" onclick="nav('notifications')">🔔 <span class="badge" style="background:var(--danger);color:#fff;font-size:10px;padding:1px 5px;border-radius:20px">3</span></button>
+    <button class="topbar-btn" onclick="nav('enquiries')">+ New Booking</button>
+  </div>
+  <div class="content" id="content">
+
+    <!-- ===== DASHBOARD PAGE ===== -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid" style="grid-template-columns:repeat(5,1fr)">
+        <div class="stat-card green">
+          <div class="stat-label">New Enquiries</div>
+          <div class="stat-val">7</div>
+          <div class="stat-sub"><span class="up">↑ 3</span> since yesterday</div>
+        </div>
+        <div class="stat-card warn">
+          <div class="stat-label">Pending Review</div>
+          <div class="stat-val">12</div>
+          <div class="stat-sub">4 urgent</div>
+        </div>
+        <div class="stat-card info">
+          <div class="stat-label">Confirmed</div>
+          <div class="stat-val">34</div>
+          <div class="stat-sub"><span class="up">↑ 8</span> this week</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-label">Active Stay</div>
+          <div class="stat-val">9</div>
+          <div class="stat-sub">Checked in today: 2</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Revenue (Apr)</div>
+          <div class="stat-val">₹4.2L</div>
+          <div class="stat-sub"><span class="up">↑ 18%</span> vs last month</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <!-- Recent Enquiries -->
+        <div class="table-wrap">
+          <div class="table-header">
+            <div class="table-title">Recent Enquiries</div>
+            <button class="btn" onclick="nav('enquiries')">View all →</button>
+          </div>
+          <table>
+            <thead><tr><th>Guest</th><th>Property</th><th>Dates</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr onclick="nav('bookingdetail')">
+                <td><b>Anita Sharma</b><br><span style="font-size:11px;color:var(--text2)">+91 98201 45678</span></td>
+                <td>Sunset Farmhouse</td>
+                <td>May 3–6</td>
+                <td><span class="badge new">New</span></td>
+              </tr>
+              <tr onclick="nav('bookingdetail')">
+                <td><b>Vikram Nair</b><br><span style="font-size:11px;color:var(--text2)">+91 77320 11122</span></td>
+                <td>Green Meadows Villa</td>
+                <td>May 10–12</td>
+                <td><span class="badge pending">Pending</span></td>
+              </tr>
+              <tr onclick="nav('bookingdetail')">
+                <td><b>Priya Mehta</b><br><span style="font-size:11px;color:var(--text2)">+91 98909 23401</span></td>
+                <td>Hilltop Retreat</td>
+                <td>May 18–21</td>
+                <td><span class="badge new">New</span></td>
+              </tr>
+              <tr onclick="nav('bookingdetail')">
+                <td><b>Rajan Desai</b><br><span style="font-size:11px;color:var(--text2)">+91 90044 55678</span></td>
+                <td>Sunrise Farmhouse</td>
+                <td>May 24–26</td>
+                <td><span class="badge confirmed">Confirmed</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Revenue mini chart + quick stats -->
+        <div class="card">
+          <div class="card-title">Monthly Revenue</div>
+          <div style="display:flex;gap:16px;margin-bottom:12px">
+            <div><div style="font-size:11px;font-family:sans-serif;color:var(--text2)">This Month</div><div style="font-size:18px;font-weight:700;font-family:sans-serif">₹4,21,500</div></div>
+            <div><div style="font-size:11px;font-family:sans-serif;color:var(--text2)">Avg / Booking</div><div style="font-size:18px;font-weight:700;font-family:sans-serif">₹12,397</div></div>
+            <div><div style="font-size:11px;font-family:sans-serif;color:var(--text2)">Occupancy</div><div style="font-size:18px;font-weight:700;font-family:sans-serif">74%</div></div>
+          </div>
+          <div class="rev-bar-wrap">
+            <div class="rev-bar" style="height:40%"><div class="rev-bar-label">Nov</div></div>
+            <div class="rev-bar" style="height:55%"><div class="rev-bar-label">Dec</div></div>
+            <div class="rev-bar" style="height:48%"><div class="rev-bar-label">Jan</div></div>
+            <div class="rev-bar" style="height:62%"><div class="rev-bar-label">Feb</div></div>
+            <div class="rev-bar" style="height:71%"><div class="rev-bar-label">Mar</div></div>
+            <div class="rev-bar" style="height:90%;background:var(--accent)"><div class="rev-bar-label" style="color:var(--accent)">Apr</div></div>
+          </div>
+          <div style="margin-top:24px">
+            <div class="mini-bar-wrap">
+              <div class="mini-bar-label"><span>Sunset Farmhouse</span><span>₹1.4L</span></div>
+              <div class="mini-bar-track"><div class="mini-bar-fill" style="width:68%"></div></div>
+            </div>
+            <div class="mini-bar-wrap">
+              <div class="mini-bar-label"><span>Green Meadows Villa</span><span>₹1.1L</span></div>
+              <div class="mini-bar-track"><div class="mini-bar-fill" style="width:52%"></div></div>
+            </div>
+            <div class="mini-bar-wrap">
+              <div class="mini-bar-label"><span>Hilltop Retreat</span><span>₹0.8L</span></div>
+              <div class="mini-bar-track"><div class="mini-bar-fill" style="width:38%"></div></div>
+            </div>
+            <div class="mini-bar-wrap">
+              <div class="mini-bar-label"><span>Sunrise Farmhouse</span><span>₹0.6L</span></div>
+              <div class="mini-bar-track"><div class="mini-bar-fill" style="width:29%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <!-- Admin workload -->
+        <div class="card">
+          <div class="card-title">Admin Workload</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="admin-avatar" style="background:#534AB7;width:30px;height:30px;font-size:11px">RP</div>
+              <div style="flex:1;font-family:sans-serif;font-size:12px">Rajesh Pawar</div>
+              <div class="badge confirmed">8 bookings</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="admin-avatar" style="background:#D85A30;width:30px;height:30px;font-size:11px">SM</div>
+              <div style="flex:1;font-family:sans-serif;font-size:12px">Sunita Malhotra</div>
+              <div class="badge confirmed">6 bookings</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="admin-avatar" style="background:#185FA5;width:30px;height:30px;font-size:11px">AK</div>
+              <div style="flex:1;font-family:sans-serif;font-size:12px">Arjun Kulkarni</div>
+              <div class="badge pending">10 bookings</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="admin-avatar" style="background:#3B6D11;width:30px;height:30px;font-size:11px">NJ</div>
+              <div style="flex:1;font-family:sans-serif;font-size:12px">Neha Joshi</div>
+              <div class="badge confirmed">5 bookings</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="admin-avatar" style="background:#BA7517;width:30px;height:30px;font-size:11px">PB</div>
+              <div style="flex:1;font-family:sans-serif;font-size:12px">Prakash Bhat</div>
+              <div class="badge new">5 bookings</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's activity -->
+        <div class="card">
+          <div class="card-title">Today's Activity</div>
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-time">10:32 AM</div>
+              <div class="tl-text">New enquiry from <b>Anita Sharma</b> for Sunset Farmhouse (May 3–6)</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-time">09:45 AM</div>
+              <div class="tl-text">Booking #BK-1042 confirmed by Arjun Kulkarni</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-time">09:12 AM</div>
+              <div class="tl-text">Payment received ₹25,000 for booking #BK-1039</div>
+            </div>
+            <div class="tl-item grey">
+              <div class="tl-time">08:50 AM</div>
+              <div class="tl-text">Priya Mehta checked in at Hilltop Retreat</div>
+            </div>
+            <div class="tl-item grey">
+              <div class="tl-time">Yesterday</div>
+              <div class="tl-text">3 new enquiries received via website</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="qa-btn" onclick="nav('enquiries')"><div class="qa-icon">📥</div><div class="qa-label">Review Enquiries</div><div class="qa-sub">7 waiting</div></div>
+        <div class="qa-btn" onclick="nav('properties')"><div class="qa-icon">🏠</div><div class="qa-label">Add Property</div><div class="qa-sub">List new villa/farmhouse</div></div>
+        <div class="qa-btn" onclick="nav('availability')"><div class="qa-icon">📅</div><div class="qa-label">Block Dates</div><div class="qa-sub">Mark unavailable</div></div>
+        <div class="qa-btn" onclick="nav('reports')"><div class="qa-icon">📊</div><div class="qa-label">View Reports</div><div class="qa-sub">Monthly summary</div></div>
+      </div>
+    </div>
+
+    <!-- ===== ENQUIRIES PAGE ===== -->
+    <div class="page" id="page-enquiries">
+      <div class="stats-grid">
+        <div class="stat-card green"><div class="stat-label">New (Unassigned)</div><div class="stat-val">7</div><div class="stat-sub">Needs attention</div></div>
+        <div class="stat-card warn"><div class="stat-label">In Review</div><div class="stat-val">12</div><div class="stat-sub">Being processed</div></div>
+        <div class="stat-card info"><div class="stat-label">Today's Total</div><div class="stat-val">19</div><div class="stat-sub">All enquiries</div></div>
+        <div class="stat-card danger"><div class="stat-label">High Priority</div><div class="stat-val">4</div><div class="stat-sub">Respond within 2h</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">All Enquiries — Lead Table</div>
+          <div class="filter-tabs">
+            <button class="ftab active">All (19)</button>
+            <button class="ftab">New (7)</button>
+            <button class="ftab">Pending (12)</button>
+            <button class="ftab">High Priority</button>
+          </div>
+          <button class="btn" style="margin-left:auto">⬇ Export</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:30px"><input type="checkbox"></th>
+              <th>Priority</th>
+              <th>Enquiry #</th>
+              <th>Guest Name</th>
+              <th>Contact</th>
+              <th>Property Requested</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Guests</th>
+              <th>Est. Value</th>
+              <th>Source</th>
+              <th>Status</th>
+              <th>Assigned To</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr onclick="nav('bookingdetail')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-dot p-high"></span>High</td>
+              <td style="font-weight:600;font-family:sans-serif">#ENQ-2071</td>
+              <td><b>Anita Sharma</b></td>
+              <td style="font-size:11px">+91 98201 45678<br>anita@email.com</td>
+              <td>Sunset Farmhouse</td>
+              <td>3 May 2025</td>
+              <td>6 May 2025</td>
+              <td>12</td>
+              <td>₹36,000</td>
+              <td><span class="enq-source">Website</span></td>
+              <td><span class="badge new">New</span></td>
+              <td style="color:var(--text2);font-size:12px">Unassigned</td>
+              <td><button class="btn primary" onclick="event.stopPropagation();nav('bookingdetail')">Accept</button></td>
+            </tr>
+            <tr onclick="nav('bookingdetail')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-dot p-high"></span>High</td>
+              <td style="font-weight:600;font-family:sans-serif">#ENQ-2070</td>
+              <td><b>Rahul Gupta</b></td>
+              <td style="font-size:11px">+91 77001 23450<br>rahul@gmail.com</td>
+              <td>Green Meadows Villa</td>
+              <td>5 May 2025</td>
+              <td>8 May 2025</td>
+              <td>20</td>
+              <td>₹54,000</td>
+              <td><span class="enq-source">Phone</span></td>
+              <td><span class="badge new">New</span></td>
+              <td style="color:var(--text2);font-size:12px">Unassigned</td>
+              <td><button class="btn primary" onclick="event.stopPropagation();nav('bookingdetail')">Accept</button></td>
+            </tr>
+            <tr onclick="nav('bookingdetail')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-dot p-med"></span>Medium</td>
+              <td style="font-weight:600;font-family:sans-serif">#ENQ-2069</td>
+              <td><b>Priya Mehta</b></td>
+              <td style="font-size:11px">+91 98909 23401</td>
+              <td>Hilltop Retreat</td>
+              <td>18 May 2025</td>
+              <td>21 May 2025</td>
+              <td>8</td>
+              <td>₹29,400</td>
+              <td><span class="enq-source">WhatsApp</span></td>
+              <td><span class="badge pending">Pending</span></td>
+              <td style="font-size:12px;font-family:sans-serif">Neha Joshi</td>
+              <td><button class="btn" onclick="event.stopPropagation()">View</button></td>
+            </tr>
+            <tr onclick="nav('bookingdetail')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-dot p-med"></span>Medium</td>
+              <td style="font-weight:600;font-family:sans-serif">#ENQ-2068</td>
+              <td><b>Vikram Nair</b></td>
+              <td style="font-size:11px">+91 77320 11122</td>
+              <td>Sunrise Farmhouse</td>
+              <td>10 May 2025</td>
+              <td>12 May 2025</td>
+              <td>15</td>
+              <td>₹22,000</td>
+              <td><span class="enq-source">Instagram</span></td>
+              <td><span class="badge pending">Pending</span></td>
+              <td style="font-size:12px;font-family:sans-serif">Arjun Kulkarni</td>
+              <td><button class="btn" onclick="event.stopPropagation()">View</button></td>
+            </tr>
+            <tr onclick="nav('bookingdetail')">
+              <td><input type="checkbox"></td>
+              <td><span class="priority-dot p-low"></span>Low</td>
+              <td style="font-weight:600;font-family:sans-serif">#ENQ-2067</td>
+              <td><b>Sneha Iyer</b></td>
+              <td style="font-size:11px">+91 90041 88800</td>
+              <td>Lakeside Cottage</td>
+              <td>24 May 2025</td>
+              <td>26 May 2025</td>
+              <td>6</td>
+              <td>₹16,000</td>
+              <td><span class="enq-source">Website</span></td>
+              <td><span class="badge new">New</span></td>
+              <td style="color:var(--text2);font-size:12px">Unassigned</td>
+              <td><button class="btn primary" onclick="event.stopPropagation();nav('bookingdetail')">Accept</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== BOOKING DETAIL PAGE ===== -->
+    <div class="page" id="page-bookingdetail">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <button class="btn" onclick="nav('enquiries')">← Back</button>
+        <div style="font-size:16px;font-weight:600">#ENQ-2071 — Anita Sharma</div>
+        <span class="badge new">New Enquiry</span>
+        <span class="badge" style="background:var(--danger-light);color:var(--danger)">High Priority</span>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn danger">✕ Decline</button>
+          <button class="btn warn">⟳ Reassign</button>
+          <button class="btn primary" onclick="showAccepted()">✓ Accept Booking</button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">
+        <div>
+          <!-- Guest Info -->
+          <div class="card" style="margin-bottom:14px">
+            <div class="detail-section">
+              <h3>Guest Information</h3>
+              <div class="detail-row"><span class="key">Full Name</span><span class="val">Anita Sharma</span></div>
+              <div class="detail-row"><span class="key">Phone</span><span class="val">+91 98201 45678</span></div>
+              <div class="detail-row"><span class="key">Email</span><span class="val">anita.sharma@email.com</span></div>
+              <div class="detail-row"><span class="key">City</span><span class="val">Pune, Maharashtra</span></div>
+              <div class="detail-row"><span class="key">Past Bookings</span><span class="val">2 previous stays ⭐ Good guest</span></div>
+              <div class="detail-row"><span class="key">Enquiry Source</span><span class="val">Website Form</span></div>
+              <div class="detail-row"><span class="key">Received At</span><span class="val">23 Apr 2025, 10:32 AM</span></div>
+            </div>
+          </div>
+
+          <!-- Booking Info -->
+          <div class="card" style="margin-bottom:14px">
+            <div class="detail-section">
+              <h3>Booking Details</h3>
+              <div class="detail-row"><span class="key">Property</span><span class="val">Sunset Farmhouse, Karjat</span></div>
+              <div class="detail-row"><span class="key">Check-in</span><span class="val">3 May 2025 (Saturday)</span></div>
+              <div class="detail-row"><span class="key">Check-out</span><span class="val">6 May 2025 (Tuesday)</span></div>
+              <div class="detail-row"><span class="key">Duration</span><span class="val">3 nights</span></div>
+              <div class="detail-row"><span class="key">No. of Guests</span><span class="val">12 adults, 3 children</span></div>
+              <div class="detail-row"><span class="key">Occasion</span><span class="val">Birthday celebration</span></div>
+              <div class="detail-row"><span class="key">Special Requests</span><span class="val">Cake arrangement, DJ setup, Early check-in</span></div>
+            </div>
+            <div class="detail-section" style="margin-top:14px">
+              <h3>Pricing Breakdown</h3>
+              <div class="detail-row"><span class="key">Base Rate (3 nights × ₹10,000)</span><span class="val">₹30,000</span></div>
+              <div class="detail-row"><span class="key">Weekend Surcharge</span><span class="val">₹3,000</span></div>
+              <div class="detail-row"><span class="key">Extra Guests (2 × ₹500)</span><span class="val">₹1,000</span></div>
+              <div class="detail-row"><span class="key">Catering Add-on</span><span class="val">₹5,000</span></div>
+              <div class="detail-row"><span class="key">Refundable Deposit</span><span class="val">₹5,000</span></div>
+              <div class="detail-row" style="font-weight:700;font-size:14px"><span class="key" style="color:var(--text)">Total Payable</span><span class="val" style="color:var(--accent)">₹44,000</span></div>
+            </div>
+          </div>
+
+          <!-- Notes + Assign -->
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-title">Admin Actions</div>
+            <div class="form-group">
+              <label class="form-label">Assign To Admin</label>
+              <select class="form-select">
+                <option>— Select Admin —</option>
+                <option>Rajesh Pawar (me)</option>
+                <option>Sunita Malhotra</option>
+                <option>Arjun Kulkarni</option>
+                <option>Neha Joshi</option>
+                <option>Prakash Bhat</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Assign to Staff Member</label>
+              <select class="form-select">
+                <option>— Select Staff —</option>
+                <option>Deepak (Caretaker — Karjat)</option>
+                <option>Ramu (Driver)</option>
+                <option>Meera (Coordinator)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Internal Note</label>
+              <textarea class="form-input" rows="3" placeholder="Add a note for your team…" style="resize:none"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Message to Guest</label>
+              <textarea class="form-input" rows="3" placeholder="Optional message to send to guest on confirmation…" style="resize:none">Dear Anita, thank you for your enquiry! We are happy to confirm your booking for Sunset Farmhouse from 3–6 May 2025.</textarea>
+            </div>
+            <div class="btn-row">
+              <button class="btn">💾 Save Draft</button>
+              <button class="btn warn">📨 Send Quotation</button>
+              <button class="btn primary" onclick="showAccepted()">✓ Confirm Booking</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div>
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-title">Property</div>
+            <div class="prop-img" style="height:100px;border-radius:var(--radius-sm);margin-bottom:10px;overflow:hidden">🌅<span class="prop-tag">Available</span></div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">Sunset Farmhouse</div>
+            <div style="font-size:11px;font-family:sans-serif;color:var(--text2);margin-bottom:8px">Karjat, Raigad</div>
+            <div style="font-size:12px;font-family:sans-serif;color:var(--text2);line-height:1.7">
+              🛏 6 Bedrooms (sleeps 20)<br>
+              🏊 Private Pool<br>
+              🍳 Full Kitchen<br>
+              🎤 DJ / Event Setup<br>
+              🅿️ Parking for 10 cars<br>
+              📶 WiFi + Power Backup
+            </div>
+            <div style="font-size:13px;font-weight:700;font-family:sans-serif;color:var(--accent);margin-top:10px">₹10,000 / night</div>
+          </div>
+
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-title">Availability Check</div>
+            <div style="font-family:sans-serif;font-size:13px">
+              <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+                <span style="color:var(--accent);font-size:16px">✓</span>
+                <span>May 3–6 is <b>Available</b></span>
+              </div>
+              <div style="padding:8px 0;border-bottom:1px solid var(--border);color:var(--text2);font-size:12px">Next booking: May 10–12</div>
+              <div style="padding:8px 0;color:var(--text2);font-size:12px">Minimum stay: 2 nights</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-title">Payment Status</div>
+            <div style="font-family:sans-serif;font-size:13px">
+              <div class="detail-row"><span class="key">Advance (30%)</span><span class="val badge confirmed">₹13,200</span></div>
+              <div class="detail-row"><span class="key">Balance Due</span><span class="val badge pending">₹25,800</span></div>
+              <div class="detail-row"><span class="key">Due Date</span><span class="val">30 Apr 2025</span></div>
+            </div>
+            <div class="btn-row" style="margin-top:10px">
+              <button class="btn">📤 Send Payment Link</button>
+              <button class="btn">Mark Paid</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Activity Log</div>
+            <div class="timeline">
+              <div class="tl-item">
+                <div class="tl-time">10:32 AM today</div>
+                <div class="tl-text">Enquiry received via website</div>
+              </div>
+              <div class="tl-item grey">
+                <div class="tl-time">10:35 AM today</div>
+                <div class="tl-text">Auto-acknowledgement sent to guest</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ALL BOOKINGS PAGE ===== -->
+    <div class="page" id="page-bookings">
+      <div class="stats-grid">
+        <div class="stat-card green"><div class="stat-label">Total Bookings</div><div class="stat-val">87</div><div class="stat-sub">This month</div></div>
+        <div class="stat-card info"><div class="stat-label">Confirmed</div><div class="stat-val">34</div></div>
+        <div class="stat-card purple"><div class="stat-label">In Progress</div><div class="stat-val">9</div></div>
+        <div class="stat-card danger"><div class="stat-label">Cancelled</div><div class="stat-val">5</div><div class="stat-sub">₹42,000 refunded</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">All Bookings</div>
+          <div class="filter-tabs">
+            <button class="ftab active">All</button>
+            <button class="ftab">Confirmed</button>
+            <button class="ftab">Active Stay</button>
+            <button class="ftab">Completed</button>
+            <button class="ftab">Cancelled</button>
+          </div>
+          <button class="btn" style="margin-left:auto">⬇ Export CSV</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Booking #</th>
+              <th>Guest</th>
+              <th>Property</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Guests</th>
+              <th>Total Value</th>
+              <th>Payment</th>
+              <th>Status</th>
+              <th>Admin</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr onclick="nav('bookingdetail')">
+              <td style="font-weight:600;font-family:sans-serif">#BK-1045</td>
+              <td>Anita Sharma</td>
+              <td>Sunset Farmhouse</td>
+              <td>3 May 25</td>
+              <td>6 May 25</td>
+              <td>15</td>
+              <td style="font-weight:600">₹44,000</td>
+              <td><span class="badge pending">Advance Paid</span></td>
+              <td><span class="badge confirmed">Confirmed</span></td>
+              <td style="font-size:12px">Rajesh P.</td>
+              <td><button class="btn">View</button></td>
+            </tr>
+            <tr onclick="nav('bookingdetail')">
+              <td style="font-weight:600;font-family:sans-serif">#BK-1044</td>
+              <td>Rahul Gupta</td>
+              <td>Green Meadows Villa</td>
+              <td>28 Apr 25</td>
+              <td>1 May 25</td>
+              <td>22</td>
+              <td style="font-weight:600">₹62,000</td>
+              <td><span class="badge confirmed">Full Paid</span></td>
+              <td><span class="badge inprogress">Active Stay</span></td>
+              <td style="font-size:12px">Arjun K.</td>
+              <td><button class="btn">View</button></td>
+            </tr>
+            <tr onclick="nav('bookingdetail')">
+              <td style="font-weight:600;font-family:sans-serif">#BK-1043</td>
+              <td>Vikram Nair</td>
+              <td>Hilltop Retreat</td>
+              <td>20 Apr 25</td>
+              <td>22 Apr 25</td>
+              <td>8</td>
+              <td style="font-weight:600">₹22,000</td>
+              <td><span class="badge confirmed">Full Paid</span></td>
+              <td><span class="badge completed">Completed</span></td>
+              <td style="font-size:12px">Neha J.</td>
+              <td><button class="btn">View</button></td>
+            </tr>
+            <tr onclick="nav('bookingdetail')">
+              <td style="font-weight:600;font-family:sans-serif">#BK-1042</td>
+              <td>Sneha Iyer</td>
+              <td>Lakeside Cottage</td>
+              <td>15 Apr 25</td>
+              <td>17 Apr 25</td>
+              <td>6</td>
+              <td style="font-weight:600">₹16,000</td>
+              <td><span class="badge danger">Refunded</span></td>
+              <td><span class="badge cancelled">Cancelled</span></td>
+              <td style="font-size:12px">Sunita M.</td>
+              <td><button class="btn">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== MY BOOKINGS PAGE ===== -->
+    <div class="page" id="page-mybookings">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:13px;font-family:sans-serif;color:var(--text2)">Showing bookings assigned to <b style="color:var(--text)">Rajesh Pawar</b></div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card green"><div class="stat-label">My Active</div><div class="stat-val">8</div></div>
+        <div class="stat-card warn"><div class="stat-label">Follow-up Needed</div><div class="stat-val">3</div></div>
+        <div class="stat-card info"><div class="stat-label">This Month Revenue</div><div class="stat-val">₹1.8L</div></div>
+        <div class="stat-card purple"><div class="stat-label">Completed (Apr)</div><div class="stat-val">12</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">My Bookings</div>
+          <div class="filter-tabs">
+            <button class="ftab active">Active (8)</button>
+            <button class="ftab">Follow-up (3)</button>
+            <button class="ftab">Completed</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Booking #</th><th>Guest</th><th>Property</th><th>Dates</th><th>Value</th><th>Next Action</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr onclick="nav('bookingdetail')">
+              <td style="font-weight:600;font-family:sans-serif">#BK-1045</td>
+              <td>Anita Sharma</td>
+              <td>Sunset Farmhouse</td>
+              <td>3–6 May</td>
+              <td>₹44,000</td>
+              <td style="font-size:12px;color:var(--warn)">⚠ Collect balance by 30 Apr</td>
+              <td><span class="badge confirmed">Confirmed</span></td>
+              <td><button class="btn">Manage</button></td>
+            </tr>
+            <tr onclick="nav('bookingdetail')">
+              <td style="font-weight:600;font-family:sans-serif">#BK-1039</td>
+              <td>Rajan Desai</td>
+              <td>Sunrise Farmhouse</td>
+              <td>28–30 Apr</td>
+              <td>₹28,000</td>
+              <td style="font-size:12px;color:var(--accent)">✓ Ready for check-in</td>
+              <td><span class="badge inprogress">Active Stay</span></td>
+              <td><button class="btn">Manage</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== PROPERTIES PAGE ===== -->
+    <div class="page" id="page-properties">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:13px;font-family:sans-serif;color:var(--text2)">5 properties listed</div>
+        <button class="topbar-btn">+ Add Property</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+        <div class="prop-card">
+          <div class="prop-img">🌅<span class="prop-tag">Active</span></div>
+          <div class="prop-body">
+            <div class="prop-name">Sunset Farmhouse</div>
+            <div class="prop-loc">📍 Karjat, Raigad</div>
+            <div class="prop-stats">🛏 6 beds &nbsp; 👥 max 20 &nbsp; 🏊 Pool</div>
+            <div class="prop-price">₹10,000 / night</div>
+            <div class="btn-row" style="margin-top:10px">
+              <button class="btn" style="font-size:11px">Edit</button>
+              <button class="btn" style="font-size:11px">Availability</button>
+              <button class="btn" style="font-size:11px">Gallery</button>
+            </div>
+          </div>
+        </div>
+        <div class="prop-card">
+          <div class="prop-img" style="background:linear-gradient(135deg,#B5D4F4 0%,#185FA5 100%)">🌿<span class="prop-tag">Active</span></div>
+          <div class="prop-body">
+            <div class="prop-name">Green Meadows Villa</div>
+            <div class="prop-loc">📍 Lonavala, Pune</div>
+            <div class="prop-stats">🛏 8 beds &nbsp; 👥 max 25 &nbsp; 🏊 Pool</div>
+            <div class="prop-price">₹18,000 / night</div>
+            <div class="btn-row" style="margin-top:10px">
+              <button class="btn" style="font-size:11px">Edit</button>
+              <button class="btn" style="font-size:11px">Availability</button>
+              <button class="btn" style="font-size:11px">Gallery</button>
+            </div>
+          </div>
+        </div>
+        <div class="prop-card">
+          <div class="prop-img" style="background:linear-gradient(135deg,#FAC775 0%,#BA7517 100%)">⛰️<span class="prop-tag">Active</span></div>
+          <div class="prop-body">
+            <div class="prop-name">Hilltop Retreat</div>
+            <div class="prop-loc">📍 Mahabaleshwar, Satara</div>
+            <div class="prop-stats">🛏 4 beds &nbsp; 👥 max 12 &nbsp; 🌄 View</div>
+            <div class="prop-price">₹9,800 / night</div>
+            <div class="btn-row" style="margin-top:10px">
+              <button class="btn" style="font-size:11px">Edit</button>
+              <button class="btn" style="font-size:11px">Availability</button>
+              <button class="btn" style="font-size:11px">Gallery</button>
+            </div>
+          </div>
+        </div>
+        <div class="prop-card">
+          <div class="prop-img" style="background:linear-gradient(135deg,#9FE1CB 0%,#085041 100%)">🌊<span class="prop-tag">Active</span></div>
+          <div class="prop-body">
+            <div class="prop-name">Lakeside Cottage</div>
+            <div class="prop-loc">📍 Mulshi, Pune</div>
+            <div class="prop-stats">🛏 3 beds &nbsp; 👥 max 8 &nbsp; 🚣 Lake</div>
+            <div class="prop-price">₹7,500 / night</div>
+            <div class="btn-row" style="margin-top:10px">
+              <button class="btn" style="font-size:11px">Edit</button>
+              <button class="btn" style="font-size:11px">Availability</button>
+              <button class="btn" style="font-size:11px">Gallery</button>
+            </div>
+          </div>
+        </div>
+        <div class="prop-card">
+          <div class="prop-img" style="background:linear-gradient(135deg,#F4C0D1 0%,#993556 100%)">🌸<span class="prop-tag" style="color:var(--danger)">Maintenance</span></div>
+          <div class="prop-body">
+            <div class="prop-name">Sunrise Farmhouse</div>
+            <div class="prop-loc">📍 Igatpuri, Nashik</div>
+            <div class="prop-stats">🛏 5 beds &nbsp; 👥 max 16 &nbsp; 🔥 Bonfire</div>
+            <div class="prop-price">₹11,500 / night</div>
+            <div class="btn-row" style="margin-top:10px">
+              <button class="btn" style="font-size:11px">Edit</button>
+              <button class="btn" style="font-size:11px">Availability</button>
+              <button class="btn danger" style="font-size:11px">Maintenance</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CALENDAR PAGE ===== -->
+    <div class="page" id="page-calendar">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <button class="btn">← Apr</button>
+          <div style="font-size:16px;font-weight:600;flex:1;text-align:center">May 2025</div>
+          <button class="btn">Jun →</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-family:sans-serif;font-size:12px;text-align:center">
+          <div style="font-weight:600;color:var(--text2);padding:6px">Sun</div>
+          <div style="font-weight:600;color:var(--text2);padding:6px">Mon</div>
+          <div style="font-weight:600;color:var(--text2);padding:6px">Tue</div>
+          <div style="font-weight:600;color:var(--text2);padding:6px">Wed</div>
+          <div style="font-weight:600;color:var(--text2);padding:6px">Thu</div>
+          <div style="font-weight:600;color:var(--text2);padding:6px">Fri</div>
+          <div style="font-weight:600;color:var(--text2);padding:6px">Sat</div>
+          <div></div><div></div><div></div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--surface2)">1</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--surface2)">2</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--accent-light);color:var(--accent-dark);font-weight:600">3 🟢</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--accent-light);color:var(--accent-dark)">4</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--accent-light);color:var(--accent-dark)">5</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--surface2)">6</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--surface2)">7</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--surface2)">8</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--surface2)">9</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:#E6F1FB;color:var(--info);font-weight:600">10 🔵</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:#E6F1FB;color:var(--info)">11</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:#E6F1FB;color:var(--info)">12</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--surface2)">13</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--surface2)">14</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer">15</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer">16</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer">17</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--warn-light);color:var(--warn);font-weight:600">18 🔶</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--warn-light);color:var(--warn)">19</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--warn-light);color:var(--warn)">20</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--warn-light);color:var(--warn)">21</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer">22</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer">23</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer">24</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--accent-light);color:var(--accent-dark)">25</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer;background:var(--accent-light);color:var(--accent-dark)">26</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer">27</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer">28</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer">29</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer">30</div>
+          <div style="padding:10px;border-radius:6px;cursor:pointer">31</div>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:14px;font-family:sans-serif;font-size:12px;color:var(--text2)">
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:var(--accent-light);display:inline-block"></span> Confirmed</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:#E6F1FB;display:inline-block"></span> Enquiry</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:var(--warn-light);display:inline-block"></span> Pending</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:var(--surface2);display:inline-block"></span> Blocked</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TEAM PAGE ===== -->
+    <div class="page" id="page-team">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div style="font-size:13px;font-family:sans-serif;color:var(--text2)">5 Admins · 8 Staff Members</div>
+        <button class="topbar-btn">+ Invite Member</button>
+      </div>
+      <div style="font-size:12px;font-family:sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text2);margin-bottom:8px">Admins</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+        <div class="admin-card">
+          <div class="admin-av" style="background:#534AB7">RP</div>
+          <div class="admin-info">
+            <div class="admin-n">Rajesh Pawar</div>
+            <div class="admin-r">Senior Admin · Pune</div>
+            <div class="admin-stats">
+              <div class="admin-stat">Active <span>8</span></div>
+              <div class="admin-stat">This month <span>22</span></div>
+              <div class="admin-stat">Revenue <span>₹1.8L</span></div>
+            </div>
+          </div>
+          <span class="badge confirmed" style="align-self:flex-start">You</span>
+        </div>
+        <div class="admin-card">
+          <div class="admin-av" style="background:#D85A30">SM</div>
+          <div class="admin-info">
+            <div class="admin-n">Sunita Malhotra</div>
+            <div class="admin-r">Admin · Mumbai</div>
+            <div class="admin-stats">
+              <div class="admin-stat">Active <span>6</span></div>
+              <div class="admin-stat">This month <span>18</span></div>
+              <div class="admin-stat">Revenue <span>₹1.4L</span></div>
+            </div>
+          </div>
+          <button class="btn" style="font-size:11px;align-self:flex-start">View</button>
+        </div>
+        <div class="admin-card">
+          <div class="admin-av" style="background:#185FA5">AK</div>
+          <div class="admin-info">
+            <div class="admin-n">Arjun Kulkarni</div>
+            <div class="admin-r">Admin · Pune</div>
+            <div class="admin-stats">
+              <div class="admin-stat">Active <span>10</span></div>
+              <div class="admin-stat">This month <span>25</span></div>
+              <div class="admin-stat">Revenue <span>₹2.1L</span></div>
+            </div>
+          </div>
+          <button class="btn" style="font-size:11px;align-self:flex-start">View</button>
+        </div>
+        <div class="admin-card">
+          <div class="admin-av" style="background:#3B6D11">NJ</div>
+          <div class="admin-info">
+            <div class="admin-n">Neha Joshi</div>
+            <div class="admin-r">Admin · Nashik</div>
+            <div class="admin-stats">
+              <div class="admin-stat">Active <span>5</span></div>
+              <div class="admin-stat">This month <span>14</span></div>
+              <div class="admin-stat">Revenue <span>₹0.9L</span></div>
+            </div>
+          </div>
+          <button class="btn" style="font-size:11px;align-self:flex-start">View</button>
+        </div>
+        <div class="admin-card">
+          <div class="admin-av" style="background:#BA7517">PB</div>
+          <div class="admin-info">
+            <div class="admin-n">Prakash Bhat</div>
+            <div class="admin-r">Admin · Mumbai</div>
+            <div class="admin-stats">
+              <div class="admin-stat">Active <span>5</span></div>
+              <div class="admin-stat">This month <span>13</span></div>
+              <div class="admin-stat">Revenue <span>₹1.0L</span></div>
+            </div>
+          </div>
+          <button class="btn" style="font-size:11px;align-self:flex-start">View</button>
+        </div>
+      </div>
+      <div style="font-size:12px;font-family:sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text2);margin-bottom:8px">Staff / Field Team</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Role</th><th>Location</th><th>Assigned Property</th><th>Contact</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Deepak Kamble</td><td>Caretaker</td><td>Karjat</td><td>Sunset Farmhouse</td><td>+91 98001 12345</td><td><span class="badge confirmed">On Duty</span></td></tr>
+            <tr><td>Ramu Shinde</td><td>Driver</td><td>Pune</td><td>Multiple</td><td>+91 97001 55555</td><td><span class="badge confirmed">Available</span></td></tr>
+            <tr><td>Meera Patil</td><td>Coordinator</td><td>Lonavala</td><td>Green Meadows</td><td>+91 96001 77777</td><td><span class="badge confirmed">On Duty</span></td></tr>
+            <tr><td>Suresh More</td><td>Caretaker</td><td>Mahabaleshwar</td><td>Hilltop Retreat</td><td>+91 95001 33333</td><td><span class="badge pending">Off Duty</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== REPORTS PAGE ===== -->
+    <div class="page" id="page-reports">
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="stat-card green"><div class="stat-label">Total Revenue (Apr)</div><div class="stat-val">₹4.21L</div><div class="stat-sub"><span class="up">↑ 18%</span> vs Mar</div></div>
+        <div class="stat-card info"><div class="stat-label">Total Bookings</div><div class="stat-val">34</div><div class="stat-sub">Confirmed this month</div></div>
+        <div class="stat-card purple"><div class="stat-label">Avg Booking Value</div><div class="stat-val">₹12,397</div><div class="stat-sub"><span class="up">↑ 8%</span></div></div>
+        <div class="stat-card warn"><div class="stat-label">Occupancy Rate</div><div class="stat-val">74%</div><div class="stat-sub">Across all properties</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Property-wise Revenue</div>
+          <div class="mini-bar-wrap" style="margin-bottom:14px">
+            <div class="mini-bar-label" style="font-size:13px"><span>Sunset Farmhouse</span><span style="font-weight:600">₹1,40,000</span></div>
+            <div class="mini-bar-track" style="height:10px"><div class="mini-bar-fill" style="width:68%;height:10px"></div></div>
+          </div>
+          <div class="mini-bar-wrap" style="margin-bottom:14px">
+            <div class="mini-bar-label" style="font-size:13px"><span>Green Meadows Villa</span><span style="font-weight:600">₹1,10,000</span></div>
+            <div class="mini-bar-track" style="height:10px"><div class="mini-bar-fill" style="width:52%;height:10px"></div></div>
+          </div>
+          <div class="mini-bar-wrap" style="margin-bottom:14px">
+            <div class="mini-bar-label" style="font-size:13px"><span>Hilltop Retreat</span><span style="font-weight:600">₹81,500</span></div>
+            <div class="mini-bar-track" style="height:10px"><div class="mini-bar-fill" style="width:38%;height:10px"></div></div>
+          </div>
+          <div class="mini-bar-wrap" style="margin-bottom:14px">
+            <div class="mini-bar-label" style="font-size:13px"><span>Sunrise Farmhouse</span><span style="font-weight:600">₹64,000</span></div>
+            <div class="mini-bar-track" style="height:10px"><div class="mini-bar-fill" style="width:30%;height:10px"></div></div>
+          </div>
+          <div class="mini-bar-wrap">
+            <div class="mini-bar-label" style="font-size:13px"><span>Lakeside Cottage</span><span style="font-weight:600">₹26,000</span></div>
+            <div class="mini-bar-track" style="height:10px"><div class="mini-bar-fill" style="width:12%;height:10px"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Booking Source Analysis</div>
+          <div style="font-family:sans-serif;font-size:13px">
+            <div class="detail-row"><span class="key">Website Form</span><span class="val">42% (14 bookings)</span></div>
+            <div class="detail-row"><span class="key">WhatsApp / Phone</span><span class="val">31% (10 bookings)</span></div>
+            <div class="detail-row"><span class="key">Instagram / Social</span><span class="val">18% (6 bookings)</span></div>
+            <div class="detail-row"><span class="key">Referrals</span><span class="val">9% (3 bookings)</span></div>
+          </div>
+          <div style="margin-top:16px">
+            <div class="card-title" style="font-size:12px">Cancellation Summary</div>
+            <div style="font-family:sans-serif;font-size:13px">
+              <div class="detail-row"><span class="key">Total Cancellations</span><span class="val">5</span></div>
+              <div class="detail-row"><span class="key">Refunds Issued</span><span class="val">₹42,000</span></div>
+              <div class="detail-row"><span class="key">Cancellation Rate</span><span class="val" style="color:var(--accent)">12.8%</span></div>
+            </div>
+          </div>
+          <div class="btn-row" style="margin-top:14px">
+            <button class="btn">⬇ Download PDF Report</button>
+            <button class="btn">⬇ Export CSV</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Admin Performance</div>
+        <table style="font-family:sans-serif;font-size:13px">
+          <thead><tr><th>Admin</th><th>Bookings Handled</th><th>Revenue Generated</th><th>Avg Response Time</th><th>Guest Rating</th><th>Cancellations</th></tr></thead>
+          <tbody>
+            <tr><td>Rajesh Pawar</td><td>22</td><td>₹1,82,000</td><td>38 min</td><td>⭐ 4.8</td><td>1</td></tr>
+            <tr><td>Sunita Malhotra</td><td>18</td><td>₹1,44,000</td><td>52 min</td><td>⭐ 4.7</td><td>1</td></tr>
+            <tr><td>Arjun Kulkarni</td><td>25</td><td>₹2,10,000</td><td>29 min</td><td>⭐ 4.9</td><td>2</td></tr>
+            <tr><td>Neha Joshi</td><td>14</td><td>₹90,000</td><td>61 min</td><td>⭐ 4.6</td><td>0</td></tr>
+            <tr><td>Prakash Bhat</td><td>13</td><td>₹1,00,000</td><td>45 min</td><td>⭐ 4.7</td><td>1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== CUSTOMERS PAGE ===== -->
+    <div class="page" id="page-customers">
+      <div class="stats-grid">
+        <div class="stat-card green"><div class="stat-label">Total Customers</div><div class="stat-val">248</div></div>
+        <div class="stat-card info"><div class="stat-label">Repeat Guests</div><div class="stat-val">67</div><div class="stat-sub">27% retention</div></div>
+        <div class="stat-card warn"><div class="stat-label">New This Month</div><div class="stat-val">23</div></div>
+        <div class="stat-card purple"><div class="stat-label">Avg Lifetime Value</div><div class="stat-val">₹38,400</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">Customer Database</div>
+          <button class="btn" style="margin-left:auto">⬇ Export</button>
+        </div>
+        <table>
+          <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>City</th><th>Total Bookings</th><th>Total Spent</th><th>Last Booking</th><th>Tag</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>Anita Sharma</b></td>
+              <td>+91 98201 45678</td>
+              <td>anita@email.com</td>
+              <td>Pune</td>
+              <td>3</td>
+              <td>₹92,000</td>
+              <td>May 2025</td>
+              <td><span class="badge confirmed">VIP</span></td>
+              <td><button class="btn" style="font-size:11px">View</button></td>
+            </tr>
+            <tr>
+              <td><b>Rahul Gupta</b></td>
+              <td>+91 77001 23450</td>
+              <td>rahul@gmail.com</td>
+              <td>Mumbai</td>
+              <td>5</td>
+              <td>₹2,10,000</td>
+              <td>Apr 2025</td>
+              <td><span class="badge confirmed">VIP</span></td>
+              <td><button class="btn" style="font-size:11px">View</button></td>
+            </tr>
+            <tr>
+              <td><b>Priya Mehta</b></td>
+              <td>+91 98909 23401</td>
+              <td>priya@email.com</td>
+              <td>Pune</td>
+              <td>2</td>
+              <td>₹51,400</td>
+              <td>Apr 2025</td>
+              <td><span class="badge pending">Regular</span></td>
+              <td><button class="btn" style="font-size:11px">View</button></td>
+            </tr>
+            <tr>
+              <td><b>Vikram Nair</b></td>
+              <td>+91 77320 11122</td>
+              <td>vikram@email.com</td>
+              <td>Nashik</td>
+              <td>1</td>
+              <td>₹22,000</td>
+              <td>Apr 2025</td>
+              <td><span class="badge new">New</span></td>
+              <td><button class="btn" style="font-size:11px">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== NOTIFICATIONS PAGE ===== -->
+    <div class="page" id="page-notifications">
+      <div class="table-wrap">
+        <div class="table-header"><div class="table-title">Notifications</div><button class="btn" style="margin-left:auto">Mark all read</button></div>
+        <div class="notif unread">
+          <div class="notif-dot" style="background:var(--accent)"></div>
+          <div class="notif-body">
+            <div class="notif-title">New enquiry: Anita Sharma → Sunset Farmhouse (May 3–6)</div>
+            <div class="notif-sub">High priority · 12 guests · Est. value ₹44,000</div>
+            <div class="notif-time">10:32 AM · Today</div>
+          </div>
+          <button class="btn primary" style="align-self:center;font-size:11px" onclick="nav('bookingdetail')">Review</button>
+        </div>
+        <div class="notif unread">
+          <div class="notif-dot" style="background:var(--warn)"></div>
+          <div class="notif-body">
+            <div class="notif-title">Payment overdue: Booking #BK-1041 — Rajan Desai</div>
+            <div class="notif-sub">Balance of ₹18,000 due since 21 Apr 2025</div>
+            <div class="notif-time">09:00 AM · Today</div>
+          </div>
+          <button class="btn warn" style="align-self:center;font-size:11px">Follow up</button>
+        </div>
+        <div class="notif unread">
+          <div class="notif-dot" style="background:var(--danger)"></div>
+          <div class="notif-body">
+            <div class="notif-title">Cancellation request: Booking #BK-1038 — Sneha Iyer</div>
+            <div class="notif-sub">Guest requesting full refund · Needs your decision</div>
+            <div class="notif-time">Yesterday · 5:44 PM</div>
+          </div>
+          <button class="btn" style="align-self:center;font-size:11px">Review</button>
+        </div>
+        <div class="notif">
+          <div class="notif-dot" style="background:var(--accent)"></div>
+          <div class="notif-body">
+            <div class="notif-title">Booking confirmed: #BK-1045 — Anita Sharma</div>
+            <div class="notif-sub">Confirmed by Rajesh Pawar · Advance payment received</div>
+            <div class="notif-time">Yesterday · 3:10 PM</div>
+          </div>
+        </div>
+        <div class="notif">
+          <div class="notif-dot" style="background:var(--text3)"></div>
+          <div class="notif-body">
+            <div class="notif-title">Check-in reminder: Priya Mehta at Hilltop Retreat</div>
+            <div class="notif-sub">Scheduled for tomorrow, 18 Apr at 2:00 PM</div>
+            <div class="notif-time">Yesterday · 9:00 AM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SETTINGS PAGE ===== -->
+    <div class="page" id="page-settings">
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Business Information</div>
+          <div class="form-group"><label class="form-label">Business Name</label><input class="form-input" value="VillaStay Retreats"></div>
+          <div class="form-group"><label class="form-label">Contact Phone</label><input class="form-input" value="+91 98000 12345"></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-input" value="admin@villastay.in"></div>
+          <div class="form-group"><label class="form-label">GST Number</label><input class="form-input" value="27AABCV1234A1Z5"></div>
+          <button class="btn primary">Save Changes</button>
+        </div>
+        <div class="card">
+          <div class="card-title">Booking Policies</div>
+          <div class="form-group"><label class="form-label">Advance Payment Required (%)</label><input class="form-input" value="30"></div>
+          <div class="form-group"><label class="form-label">Cancellation Policy</label>
+            <select class="form-select"><option>30% non-refundable within 7 days</option><option>50% non-refundable within 3 days</option><option>No refund within 48 hours</option></select>
+          </div>
+          <div class="form-group"><label class="form-label">Minimum Stay (nights)</label><input class="form-input" value="2"></div>
+          <div class="form-group"><label class="form-label">Check-in Time</label><input class="form-input" value="12:00 PM"></div>
+          <div class="form-group"><label class="form-label">Check-out Time</label><input class="form-input" value="11:00 AM"></div>
+          <button class="btn primary">Save Policies</button>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:16px">
+        <div class="card">
+          <div class="card-title">Notification Preferences</div>
+          <div style="font-family:sans-serif;font-size:13px;display:flex;flex-direction:column;gap:10px">
+            <label style="display:flex;justify-content:space-between;align-items:center">New enquiry alert <input type="checkbox" checked></label>
+            <label style="display:flex;justify-content:space-between;align-items:center">Payment received <input type="checkbox" checked></label>
+            <label style="display:flex;justify-content:space-between;align-items:center">Cancellation request <input type="checkbox" checked></label>
+            <label style="display:flex;justify-content:space-between;align-items:center">Check-in reminder <input type="checkbox" checked></label>
+            <label style="display:flex;justify-content:space-between;align-items:center">Daily summary email <input type="checkbox"></label>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Integrations</div>
+          <div style="font-family:sans-serif;font-size:13px;display:flex;flex-direction:column;gap:10px">
+            <div class="detail-row"><span class="key">WhatsApp API</span><span class="badge confirmed">Connected</span></div>
+            <div class="detail-row"><span class="key">Payment Gateway (Razorpay)</span><span class="badge confirmed">Connected</span></div>
+            <div class="detail-row"><span class="key">Email (SMTP)</span><span class="badge confirmed">Connected</span></div>
+            <div class="detail-row"><span class="key">Google Calendar Sync</span><span class="badge pending">Pending</span></div>
+            <div class="detail-row"><span class="key">Instagram Lead Form</span><span class="badge new">Setup</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== AVAILABILITY PAGE ===== -->
+    <div class="page" id="page-availability">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">Block / Unblock Dates</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Property</label><select class="form-select"><option>Sunset Farmhouse</option><option>Green Meadows Villa</option><option>Hilltop Retreat</option><option>Lakeside Cottage</option><option>Sunrise Farmhouse</option></select></div>
+          <div class="form-group"><label class="form-label">From Date</label><input type="date" class="form-input"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">To Date</label><input type="date" class="form-input"></div>
+          <div class="form-group"><label class="form-label">Reason</label><select class="form-select"><option>Maintenance</option><option>Owner Stay</option><option>Renovation</option><option>Event Prep</option></select></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary">Block Dates</button>
+          <button class="btn danger">Remove Block</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><div class="table-title">Blocked Periods</div></div>
+        <table>
+          <thead><tr><th>Property</th><th>From</th><th>To</th><th>Reason</th><th>Blocked By</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Sunrise Farmhouse</td><td>22 Apr 2025</td><td>30 Apr 2025</td><td>Maintenance</td><td>Rajesh Pawar</td><td><button class="btn danger" style="font-size:11px">Unblock</button></td></tr>
+            <tr><td>Lakeside Cottage</td><td>1 Jun 2025</td><td>5 Jun 2025</td><td>Owner Stay</td><td>Prakash Bhat</td><td><button class="btn danger" style="font-size:11px">Unblock</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== PRICING PAGE ===== -->
+    <div class="page" id="page-pricing">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">Add Pricing Rule</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Property</label><select class="form-select"><option>All Properties</option><option>Sunset Farmhouse</option><option>Green Meadows Villa</option></select></div>
+          <div class="form-group"><label class="form-label">Rule Type</label><select class="form-select"><option>Weekend Surcharge</option><option>Season Pricing</option><option>Long Stay Discount</option><option>Festival Pricing</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Value (% or ₹)</label><input class="form-input" placeholder="e.g. 20% or ₹2000"></div>
+          <div class="form-group"><label class="form-label">Applies From</label><input type="date" class="form-input"></div>
+        </div>
+        <button class="btn primary">Add Rule</button>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><div class="table-title">Active Pricing Rules</div></div>
+        <table>
+          <thead><tr><th>Property</th><th>Rule</th><th>Value</th><th>Applies</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>All</td><td>Weekend Surcharge</td><td>+₹2,000/night</td><td>Fri–Sun</td><td><span class="badge confirmed">Active</span></td><td><button class="btn" style="font-size:11px">Edit</button></td></tr>
+            <tr><td>Green Meadows Villa</td><td>Peak Season</td><td>+25%</td><td>May–Jun</td><td><span class="badge confirmed">Active</span></td><td><button class="btn" style="font-size:11px">Edit</button></td></tr>
+            <tr><td>All</td><td>Long Stay Discount</td><td>–10% (5+ nights)</td><td>Always</td><td><span class="badge confirmed">Active</span></td><td><button class="btn" style="font-size:11px">Edit</button></td></tr>
+            <tr><td>All</td><td>Early Bird</td><td>–8% (30 days advance)</td><td>Always</td><td><span class="badge pending">Inactive</span></td><td><button class="btn" style="font-size:11px">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+const pages = {
+  'dashboard':'Dashboard Overview',
+  'enquiries':'New Enquiries',
+  'bookings':'All Bookings',
+  'mybookings':'My Bookings',
+  'calendar':'Booking Calendar',
+  'properties':'Properties',
+  'availability':'Availability Manager',
+  'pricing':'Pricing Rules',
+  'customers':'Customer Database',
+  'team':'Team & Admins',
+  'reports':'Reports & Analytics',
+  'notifications':'Notifications',
+  'settings':'Settings',
+  'bookingdetail':'Booking Detail — #ENQ-2071'
+};
+
+function nav(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el = document.getElementById('page-'+page);
+  if(el) el.classList.add('active');
+  document.getElementById('topbar-title').textContent = pages[page]||page;
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    n.classList.remove('active');
+    const fn = n.getAttribute('onclick');
+    if(fn && fn.includes("'"+page+"'")) n.classList.add('active');
+  });
+  document.querySelector('.content').scrollTop=0;
+}
+
+function showAccepted(){
+  nav('mybookings');
+  const banner = document.createElement('div');
+  banner.style.cssText='background:var(--accent-light);border:1px solid var(--accent);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;font-family:sans-serif;font-size:13px;color:var(--accent-dark);display:flex;align-items:center;gap:10px';
+  banner.innerHTML='<span style="font-size:18px">✓</span> <span><b>Booking #ENQ-2071 accepted!</b> Now showing in Your Bookings. Confirmation sent to Anita Sharma.</span>';
+  const content = document.getElementById('page-mybookings');
+  content.insertBefore(banner, content.firstChild);
+  setTimeout(()=>banner.remove(), 5000);
+}
+</script>
+</body>
+</html>
